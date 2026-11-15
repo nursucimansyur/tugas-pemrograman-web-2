@@ -32,4 +32,31 @@ class ItemController extends Controller
 
         return redirect()->route('items.index')->with('success', 'Barang berhasil ditambahkan!');
     }
+
+    public function edit(Item $item)
+    {
+        return view('items.edit', compact('item'));
+    }
+
+    public function update(Request $request, Item $item)
+    {
+        $validated = $request->validate([
+            'item_code' => 'required|string|max:20|unique:items,item_code,' . $item->id,
+            'name'      => 'required|string|max:255',
+            'category'  => 'required|string|max:100',
+            'quantity'  => 'required|integer|min:1',
+            'condition' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+        ]);
+
+        $item->update($validated);
+
+        return redirect()->route('items.index')->with('success', 'Data barang berhasil diperbarui!');
+    }
+
+    public function destroy(Item $item)
+    {
+        $item->delete();
+
+        return redirect()->route('items.index')->with('success', 'Barang berhasil dihapus!');
+    }
 }
